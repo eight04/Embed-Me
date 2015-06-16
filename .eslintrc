@@ -1,0 +1,12 @@
+{
+	"env": {
+		"browser": true
+	},
+	"rules": {
+		"eqeqeq": 0,
+		"camelcase": 0
+	},
+	"globals": {
+		"GM_config": false
+	}
+}
