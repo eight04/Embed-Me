@@ -11,8 +11,9 @@ embedMe.addModule(function(){
 		getEmbedFunction: function() {
 			return function (url, text) {
 				var video = document.createElement("video");
-				video.src = url;
+				video.controls = true;
 				video.title = text;
+				video.src = url;
 				return video;
 			};
 		}

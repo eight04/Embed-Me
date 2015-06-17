@@ -1,4 +1,4 @@
-embedMe.add(function(){
+embedMe.addModule(function(){
 	"use strict";
 
 	return {
@@ -11,25 +11,22 @@ embedMe.add(function(){
 			return [
 				/https?:\/\/www\.youtube\.com\/watch\?v=([^&]+)/i,
 				/https?:\/\/youtu\.be\/([^?]+)/i
-			]
+			];
 		},
 		getEmbedFunction: function() {
-			var apiKey = "AIzaSyCPVYeYLN1cgutHpSwv8dQR0CVws26sSs0";
-
 			return function(id, url, text, replace) {
-				// Grab embeding code from google api
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "https://www.googleapis.com/youtube/v3/videos?id=" + id + "&part=player&fields=item/player&key=" + apiKey,
+					url: "http://www.youtube.com/oembed?format=json&url=" + url,
 					onload: function(response) {
-						var embedHtml = JSON.parse(response.responseText).items[0].player.embedHtml,
+						var html = JSON.parse(response.responseText).html,
 							container = document.createElement("div");
 
-						container.innerHTML = embedHtml;
+						container.innerHTML = html;
 						replace(container);
 					}
 				});
-			}
+			};
 		}
-	}
+	};
 });

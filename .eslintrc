@@ -8,12 +8,14 @@
 		"new-parens": 0,
 		"no-unused-vars": [2, {"vars": "local"}],
 		"new-cap": [2, {"capIsNew": false}],
-		"quotes": 0
+		"quotes": 0,
+		"no-shadow": 0
 	},
 	"globals": {
 		"GM_config": false,
 		"embedMe": true,
 		"GM_registerMenuCommand": false,
-		"GM_xmlhttpRequest": false
+		"GM_xmlhttpRequest": false,
+		"GM_addStyle": false
 	}
 }

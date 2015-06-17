@@ -1,12 +1,12 @@
 
-embedMe.add(function(){
+embedMe.addModule(function(){
 	"use strict";
 	return {
 		name: "Gfycat",
 		domains: ["gfycat.com"],
 		getPatterns: function() {
 			return [
-				/gfycat\.com\/(\w+)/i
+				/gfycat\.com\/([A-Z]\w*)$/i
 			];
 		},
 		getEmbedFunction: function() {

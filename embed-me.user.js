@@ -1,5 +1,11 @@
 // ==UserScript==
 // @name        Embed Me!
+// @author      eight <eight04@gmail.com>
+// @homepage    https://github.com/eight04/Embed-Me
+// @supportURL  https://github.com/eight04/Embed-Me/issues
+// @compatible  firefox
+// @compatible  chrome
+// @compatible  opera
 // @version     0.1.0
 // @namespace   eight04.blogspot.com
 // @description An userscript to embed video, images from links.
@@ -9,6 +15,7 @@
 // @grant       GM_registerMenuCommand
 // @grant       GM_getValue
 // @grant       GM_setValue
+// @grant       GM_xmlhttpRequest
 // @license     MIT
 // ==/UserScript==
 
@@ -16,8 +23,7 @@ var embedMe = function(){
 
 	"use strict";
 
-	var mods = [],
-		globalMods = [],
+	var globalMods = [],
 		index = {},
 		config, re;
 
@@ -27,10 +33,10 @@ var embedMe = function(){
 			type: "checkbox",
 			default: true
 		},
-		excudes: {
-			label: "Excludes these urls",
+		excludes: {
+			label: "Excludes these urls (regexp per line)",
 			type: "textarea",
-			default: "example\.com\nexample2\.com"
+			default: ""
 		}
 	});
 
@@ -42,8 +48,8 @@ var embedMe = function(){
 		};
 	}
 
-	function addModule(mod) {
-		mods.push(mod);
+	function addModule(modProvider) {
+		var mod = modProvider();
 
 		if (mod.global) {
 			globalMods.push(mod);
@@ -55,11 +61,33 @@ var embedMe = function(){
 		}
 	}
 
+	function validParent(node) {
+		var cache = node;
+		while (node != document.documentElement) {
+			if (node.INVALID || node.className.indexOf("embed-me") >= 0) {
+				cache.INVALID = true;
+				return false;
+			}
+			if (!node.parentNode) {
+				return false;
+			}
+			if (node.VALID) {
+				break;
+			}
+			node = node.parentNode;
+		}
+		cache.VALID = true;
+		return true;
+	}
+
 	function valid(node) {
+		if (!validParent(node)) {
+			return false;
+		}
 		if (node.nodeName != "A" || !node.href) {
 			return false;
 		}
-		if (config.simple && node.childNodes.length > 1) {
+		if (config.simple && (node.childNodes.length != 1 || node.childNodes[0].nodeType != 3)) {
 			return false;
 		}
 		if (re.excludeUrl && re.excludeUrl.test(node.href)) {
@@ -87,8 +115,14 @@ var embedMe = function(){
 
 	function callEmbedFunc(node, params, func) {
 		var replace = function (newNode) {
+			if (!node.parentNode) {
+				// The node was detached from DOM tree
+				return;
+			}
+			newNode.classList.add("embed-me");
 			node.parentNode.replaceChild(newNode, node);
 		};
+//		console.log(params);
 		params.push(node.href, node.textContent, node, replace);
 		var result = func.apply(null, params);
 		if (result) {
@@ -101,36 +135,32 @@ var embedMe = function(){
 			return;
 		}
 
-		var mod, patterns, match, i, j;
+		var mods = [], mod, patterns, match, i, j;
 
 		if (node.hostname in index) {
-			mod = index[node.hostname];
+			mods.push(index[node.hostname]);
+		}
+
+		mods = mods.concat(globalMods);
+
+		for (j = 0; i < mods.length; j++) {
+			mod = mods[j];
 			patterns = getPatterns(mod);
 
 			for (i = 0; i < patterns.length; i++) {
-				if ((match = patterns[i].match(node.href))) {
-					callEmbedFunc(node, Array.slice.call(match, 1), getEmbedFunction(mod));
+				if ((match = patterns[i].exec(node.href))) {
+					callEmbedFunc(node, Array.prototype.slice.call(match, 1), getEmbedFunction(mod));
 					return;
 				}
 			}
 		}
-
-		for (j = 0; j < globalMods.length; j++) {
-			mod = globalMods[j];
-			patterns = getPatterns(mod);
-
-			for (i = 0; i < patterns.length; i++) {
-				if ((match = patterns[i].match(node.href))) {
-					callEmbedFunc(node, Array.slice.call(match, 1), getEmbedFunction(mod));
-					return;
-				}
-			}
-		}
+		// The link is not embedable.
+		node.INVALID = true;
 	}
 
 	function observeDocument(callback) {
 
-		callback(document.body);
+		setTimeout(callback, 0, document.body);
 
 		new MutationObserver(function(mutations){
 			var i;
@@ -152,7 +182,7 @@ var embedMe = function(){
 	GM_config.onclose = loadConfig;
 
 	observeDocument(function(node){
-		var links = node.querySelector("a[href]"), i;
+		var links = node.querySelectorAll("a[href]"), i;
 		for (i = 0; i < links.length; i++) {
 			embed(links[i]);
 		}

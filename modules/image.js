@@ -1,4 +1,4 @@
-embedMe.add(function(){
+embedMe.addModule(function(){
 	"use strict";
 
 	return {
