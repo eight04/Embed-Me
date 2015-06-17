@@ -1,5 +1,11 @@
 // ==UserScript==
 // @name        Embed Me!
+// @author      eight <eight04@gmail.com>
+// @homepage    https://github.com/eight04/Embed-Me
+// @supportURL  https://github.com/eight04/Embed-Me/issues
+// @compatible  firefox
+// @compatible  chrome
+// @compatible  opera
 // @version     0.1.0
 // @namespace   eight04.blogspot.com
 // @description An userscript to embed video, images from links.
@@ -9,6 +15,7 @@
 // @grant       GM_registerMenuCommand
 // @grant       GM_getValue
 // @grant       GM_setValue
+// @grant       GM_xmlhttpRequest
 // @license     MIT
 // ==/UserScript==
 
@@ -16,8 +23,7 @@ var embedMe = function(){
 
 	"use strict";
 
-	var mods = [],
-		globalMods = [],
+	var globalMods = [],
 		index = {},
 		config, re;
 
@@ -44,8 +50,6 @@ var embedMe = function(){
 
 	function addModule(modProvider) {
 		var mod = modProvider();
-
-		mods.push(mod);
 
 		if (mod.global) {
 			globalMods.push(mod);
@@ -131,10 +135,16 @@ var embedMe = function(){
 			return;
 		}
 
-		var mod, patterns, match, i, j;
+		var mods = [], mod, patterns, match, i, j;
 
 		if (node.hostname in index) {
-			mod = index[node.hostname];
+			mods.push(index[node.hostname]);
+		}
+
+		mods = mods.concat(globalMods);
+
+		for (j = 0; j < mods.length; j++) {
+			mod = mods[j];
 			patterns = getPatterns(mod);
 
 			for (i = 0; i < patterns.length; i++) {
@@ -144,18 +154,8 @@ var embedMe = function(){
 				}
 			}
 		}
-
-		for (j = 0; j < globalMods.length; j++) {
-			mod = globalMods[j];
-			patterns = getPatterns(mod);
-
-			for (i = 0; i < patterns.length; i++) {
-				if ((match = patterns[i].exec(node.href))) {
-					callEmbedFunc(node, Array.prototype.slice.call(match, 1), getEmbedFunction(mod));
-					return;
-				}
-			}
-		}
+		// The link is not embedable.
+		node.INVALID = true;
 	}
 
 	function observeDocument(callback) {
@@ -208,7 +208,7 @@ embedMe.addModule(function(){
 			return function(name, url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "http://gfycat.com/cajax/get/" + name,
+					url: "//gfycat.com/cajax/get/" + name,
 					onload: function(response) {
 						var res = JSON.parse(response.responseText);
 						if (res.error) {
@@ -265,7 +265,7 @@ embedMe.addModule(function(){
 			GM_addStyle('.imgur-embed-iframe-pub { box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.10); border: 1px solid #ddd; border-radius: 2px; margin: 10px 0; width: 540px; overflow: hidden; }');
 
 			window.addEventListener("message", function(e){
-				if (e.origin != "http://imgur.com") {
+				if (e.origin.indexOf("imgur.com") < 0) {
 					return;
 				}
 
@@ -280,7 +280,7 @@ embedMe.addModule(function(){
 				var iframe = document.createElement("iframe");
 				iframe.className = "imgur-embed-iframe-pub imgur-embed-iframe-pub-" + id + "-true-540";
 				iframe.scrolling = "no";
-				iframe.src = "http://imgur.com/" + id + "/embed?w=540&ref=" + location.href;
+				iframe.src = "//imgur.com/" + id + "/embed?w=540&ref=" + location.href;
 				return iframe;
 			};
 		}
@@ -301,7 +301,7 @@ embedMe.addModule(function(){
 			return function(url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "http://soundcloud.com/oembed?format=json&url=" + url,
+					url: "//soundcloud.com/oembed?format=json&url=" + url,
 					onload: function(response) {
 						if (!response.responseText) {
 							return;
@@ -330,7 +330,7 @@ embedMe.addModule(function(){
 		getEmbedFunction: function() {
 			return function (user, id) {
 				var container = document.createElement("div");
-				container.innerHTML = '<object bgcolor="#000000" data="http://www.twitch.tv/swflibs/TwitchPlayer.swf" height="378" id="clip_embed_player_flash" type="application/x-shockwave-flash" width="620"><param name="movie" value="http://www.twitch.tv/swflibs/TwitchPlayer.swf" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="allowFullScreen" value="true" /><param name="flashvars" value="channel=' + user + '&amp;auto_play=false&amp;autoplay=false&amp;autostart=false&amp;start_volume=25&amp;videoId=v' + id + '" /></object><br /><a href="http://www.twitch.tv/' + user + '" style="padding:2px 0px 4px; display:block; width: 320px; font-weight:normal; font-size:10px; text-decoration:underline;">Watch live video from ' + user + ' on Twitch</a>';
+				container.innerHTML = '<object bgcolor="#000000" data="//www.twitch.tv/swflibs/TwitchPlayer.swf" height="378" id="clip_embed_player_flash" type="application/x-shockwave-flash" width="620"><param name="movie" value="//www.twitch.tv/swflibs/TwitchPlayer.swf" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="allowFullScreen" value="true" /><param name="flashvars" value="channel=' + user + '&amp;auto_play=false&amp;autoplay=false&amp;autostart=false&amp;start_volume=25&amp;videoId=v' + id + '" /></object><br /><a href="//www.twitch.tv/' + user + '" style="padding:2px 0px 4px; display:block; width: 320px; font-weight:normal; font-size:10px; text-decoration:underline;">Watch live video from ' + user + ' on Twitch</a>';
 				return container;
 			};
 		}
@@ -370,15 +370,15 @@ embedMe.addModule(function(){
 		],
 		getPatterns: function() {
 			return [
-				/https?:\/\/www\.youtube\.com\/watch\?v=([^&]+)/i,
-				/https?:\/\/youtu\.be\/([^?]+)/i
+				/youtube\.com\/watch\?v=([^&]+)/i,
+				/youtu\.be\/([^?]+)/i
 			];
 		},
 		getEmbedFunction: function() {
 			return function(id, url, text, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "http://www.youtube.com/oembed?format=json&url=" + url,
+					url: "//www.youtube.com/oembed?format=json&url=" + url,
 					onload: function(response) {
 						var html = JSON.parse(response.responseText).html,
 							container = document.createElement("div");

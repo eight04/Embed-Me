@@ -12,7 +12,7 @@ embedMe.addModule(function(){
 			return function(url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "http://soundcloud.com/oembed?format=json&url=" + url,
+					url: "//soundcloud.com/oembed?format=json&url=" + url,
 					onload: function(response) {
 						if (!response.responseText) {
 							return;

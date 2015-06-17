@@ -13,7 +13,7 @@ embedMe.addModule(function(){
 			return function(name, url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
-					url: "http://gfycat.com/cajax/get/" + name,
+					url: "//gfycat.com/cajax/get/" + name,
 					onload: function(response) {
 						var res = JSON.parse(response.responseText);
 						if (res.error) {

@@ -143,7 +143,7 @@ var embedMe = function(){
 
 		mods = mods.concat(globalMods);
 
-		for (j = 0; i < mods.length; j++) {
+		for (j = 0; j < mods.length; j++) {
 			mod = mods[j];
 			patterns = getPatterns(mod);
 
