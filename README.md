@@ -29,7 +29,7 @@ A module object should look like:
 		];
 	},
 	getEmbedFunction: function() {
-		// Return a embed function.
+		// Return an embedding function.
 		//
 		// Params:
 		//   1...n  The capturing groups returned by regex pattern. n = groups.length.
@@ -41,7 +41,7 @@ A module object should look like:
 		// Usually you can return new element back. If you have to replace element asynchronously,
 		// send new element to replace function when you are finished.
 
-		return function (id, url, text) {
+		return function (url, text, node, replace) {
 			// ...
 		}
 	}
