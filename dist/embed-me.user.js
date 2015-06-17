@@ -6,7 +6,7 @@
 // @compatible  firefox
 // @compatible  chrome
 // @compatible  opera
-// @version     0.1.0
+// @version     0.1.1
 // @namespace   eight04.blogspot.com
 // @description An userscript to embed video, images from links.
 // @include     http*
