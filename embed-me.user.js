@@ -17,10 +17,11 @@ var embedMe = function(){
 	"use strict";
 
 	var mods = [],
+		globalMods = [],
 		index = {},
 		config, re;
 
-	config = GM_config.init("Embed Me!", {
+	GM_config.init("Embed Me!", {
 		simple: {
 			label: "Ignore complex anchor",
 			type: "checkbox",
@@ -35,36 +36,42 @@ var embedMe = function(){
 
 	function loadConfig() {
 		config = GM_config.get();
-		re = config.excludes.trim().splt(/\s*\n\s*/).join("|");
+		var exclude = config.excludes.trim();
+		re = {
+			excludeUrl: exclude && new RegExp(exclude.split(/\s*\n\s*/).join("|"), "i")
+		};
 	}
 
 	function addModule(mod) {
 		mods.push(mod);
 
-		var i;
-		for (i = 0; i < mod.domains.length; i++) {
-			index[mod.domains[i]] = mod;
+		if (mod.global) {
+			globalMods.push(mod);
+		} else {
+			var i;
+			for (i = 0; i < mod.domains.length; i++) {
+				index[mod.domains[i]] = mod;
+			}
 		}
 	}
 
 	function valid(node) {
-		if (node.nodeName != "A" || !node.href || !(node.hostname in index)) {
+		if (node.nodeName != "A" || !node.href) {
 			return false;
 		}
 		if (config.simple && node.childNodes.length > 1) {
 			return false;
 		}
-		if (re.excludeUrl.test(node.href)) {
+		if (re.excludeUrl && re.excludeUrl.test(node.href)) {
 			return false;
 		}
 		return true;
 	}
 
-	function getModule(host) {
-		return index[host];
-	}
-
 	function getPatterns(mod) {
+		if (!mod.getPatterns) {
+			return [];
+		}
 		if (!mod.patterns) {
 			mod.patterns = mod.getPatterns();
 		}
@@ -73,7 +80,19 @@ var embedMe = function(){
 
 	function getEmbedFunction(mod) {
 		if (!mod.embedFunction) {
+			mod.embedFunction = mod.getEmbedFunction();
+		}
+		return mod.embedFunction;
+	}
 
+	function callEmbedFunc(node, params, func) {
+		var replace = function (newNode) {
+			node.parentNode.replaceChild(newNode, node);
+		};
+		params.push(node.href, node.textContent, node, replace);
+		var result = func.apply(null, params);
+		if (result) {
+			replace(result);
 		}
 	}
 
@@ -82,115 +101,64 @@ var embedMe = function(){
 			return;
 		}
 
-		var mod = index[node.host],
-			patterns = getPatterns(mod),
-			match, i, args, newElement;
+		var mod, patterns, match, i, j;
 
-		for (i = 0; i < patterns.length; i++) {
-			if ((match = patterns[i].match(node.href))) {
-				args = Array.slice.call(match, 1);
-				args.push(node.href, node);
-				newElement = getEmbedFunction(mod).apply(null, args);
-				node.parentNode.replaceChild(newElement, node);
-				return;
+		if (node.hostname in index) {
+			mod = index[node.hostname];
+			patterns = getPatterns(mod);
+
+			for (i = 0; i < patterns.length; i++) {
+				if ((match = patterns[i].match(node.href))) {
+					callEmbedFunc(node, Array.slice.call(match, 1), getEmbedFunction(mod));
+					return;
+				}
+			}
+		}
+
+		for (j = 0; j < globalMods.length; j++) {
+			mod = globalMods[j];
+			patterns = getPatterns(mod);
+
+			for (i = 0; i < patterns.length; i++) {
+				if ((match = patterns[i].match(node.href))) {
+					callEmbedFunc(node, Array.slice.call(match, 1), getEmbedFunction(mod));
+					return;
+				}
 			}
 		}
 	}
 
+	function observeDocument(callback) {
+
+		callback(document.body);
+
+		new MutationObserver(function(mutations){
+			var i;
+			for (i = 0; i < mutations.length; i++) {
+				if (!mutations[i].addedNodes.length) {
+					continue;
+				}
+				callback(mutations[i].target);
+			}
+		}).observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	}
+
+	loadConfig();
+
+	GM_registerMenuCommand("Embed Me! - Configure", GM_config.open);
+	GM_config.onclose = loadConfig;
+
+	observeDocument(function(node){
+		var links = node.querySelector("a[href]"), i;
+		for (i = 0; i < links.length; i++) {
+			embed(links[i]);
+		}
+	});
+
 	return {
-		embed: embed,
 		addModule: addModule
 	};
 }();
-
-
-var embedMe = function() {
-
-	var embedFunction = {
-		image: function(url, element) {
-			var obj;
-			if (!config.useImg || !/^[^?#]+\.(jpg|png|gif|jpeg)($|[?#])/i.test(url)) {
-				return null;
-			}
-			obj = document.createElement("img");
-			obj.className = "embedme-image";
-			obj.alt = url;
-			obj.src = url;
-			element = element.cloneNode(false);
-			element.appendChild(obj);
-			return element;
-		},
-		youtube: function(url) {
-			var id, cont, wrap, obj;
-			if (!config.useYT || !(id = getYoutubeId(url))) {
-				return null;
-			}
-			cont = document.createElement("div");
-			cont.className = "embedme-video";
-
-			wrap = document.createElement("div");
-			wrap.className = "embedme-video-wrap";
-			cont.appendChild(wrap);
-
-			obj = document.createElement("iframe");
-			obj.className = "embedme-video-iframe";
-			obj.src = "https://www.youtube.com/embed/" + id;
-			obj.setAttribute("allowfullscreen", "true");
-			obj.setAttribute("frameborder", "0");
-			wrap.appendChild(obj);
-
-			return cont;
-		}
-	};
-
-	function embedContent(element) {
-		var url = element.href, key, embed;
-
-		if (!element.parentNode) {
-			return;
-		}
-
-		for (key in embedFunction) {
-			embed = embedFunction[key](url, element);
-			if (embed) {
-				embed.classList.add("embedme");
-				element.parentNode.replaceChild(embed, element);
-				return;
-			}
-		}
-		//	element.classList.add("embedme-fail");
-	}
-
-	function embed(node) {
-		var result, nodes = [], i, xpath;
-
-		if (config.embedAll) {
-			xpath = ".//a[not(*) and text() and @href and not(contains(@class, 'embedme'))]";
-		} else {
-			xpath = ".//a[not(*) and text() and @href and not(contains(@class, 'embedme')) and contains(@class, 'linkifyplus')]";
-		}
-
-		result = document.evaluate(xpath, node, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
-		for (i = 0; i < result.snapshotLength; i++) {
-			nodes.push(result.snapshotItem(i));
-		}
-
-		loop(nodes, embedContent);
-	}
-
-	return {
-		embed: embed
-	};
-}();
-
-observeDocument(embedMe.embed);
-
-function template(text, option) {
-	var key;
-	for (key in option) {
-		text = text.split("@" + key).join(option[key]);
-	}
-	return text;
-}
-

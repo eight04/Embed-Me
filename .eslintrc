@@ -4,9 +4,16 @@
 	},
 	"rules": {
 		"eqeqeq": 0,
-		"camelcase": 0
+		"camelcase": 0,
+		"new-parens": 0,
+		"no-unused-vars": [2, {"vars": "local"}],
+		"new-cap": [2, {"capIsNew": false}],
+		"quotes": 0
 	},
 	"globals": {
-		"GM_config": false
+		"GM_config": false,
+		"embedMe": true,
+		"GM_registerMenuCommand": false,
+		"GM_xmlhttpRequest": false
 	}
 }
