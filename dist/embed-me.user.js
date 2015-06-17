@@ -17,6 +17,7 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @license     MIT
+// @noframes
 // ==/UserScript==
 
 var embedMe = function(){
@@ -122,7 +123,6 @@ var embedMe = function(){
 			newNode.classList.add("embed-me");
 			node.parentNode.replaceChild(newNode, node);
 		};
-//		console.log(params);
 		params.push(node.href, node.textContent, node, replace);
 		var result = func.apply(null, params);
 		if (result) {
@@ -134,6 +134,8 @@ var embedMe = function(){
 		if (!valid(node)) {
 			return;
 		}
+		// Never process same element twice
+		node.INVALID = true;
 
 		var mods = [], mod, patterns, match, i, j;
 
@@ -154,8 +156,6 @@ var embedMe = function(){
 				}
 			}
 		}
-		// The link is not embedable.
-		node.INVALID = true;
 	}
 
 	function observeDocument(callback) {
@@ -176,17 +176,21 @@ var embedMe = function(){
 		});
 	}
 
+	function init() {
+		observeDocument(function(node){
+			var links = node.querySelectorAll("a[href]"), i;
+			for (i = 0; i < links.length; i++) {
+				embed(links[i]);
+			}
+		});
+	}
+
 	loadConfig();
 
 	GM_registerMenuCommand("Embed Me! - Configure", GM_config.open);
 	GM_config.onclose = loadConfig;
 
-	observeDocument(function(node){
-		var links = node.querySelectorAll("a[href]"), i;
-		for (i = 0; i < links.length; i++) {
-			embed(links[i]);
-		}
-	});
+	init();
 
 	return {
 		addModule: addModule
