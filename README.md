@@ -29,17 +29,17 @@ A module object should look like:
 		];
 	},
 	getEmbedFunction: function() {
-		Return a embed function.
-
-		Params:
-		  1...n  The capturing groups returned by regex pattern. n = groups.length.
-		  n+1    The url of the link.
-		  n+2    The text content of the link.
-		  n+3    The link itself.
-		  n+4    A replace function.
-
-		Usually you can return new element back. If you have to replace element asynchronously,
-		send new element to replace function when you are finished.
+		// Return a embed function.
+		//
+		// Params:
+		//   1...n  The capturing groups returned by regex pattern. n = groups.length.
+		//   n+1    The url of the link.
+		//   n+2    The text content of the link.
+		//   n+3    The link itself.
+		//   n+4    A replace function.
+		//
+		// Usually you can return new element back. If you have to replace element asynchronously,
+		// send new element to replace function when you are finished.
 
 		return function (id, url, text) {
 			// ...
