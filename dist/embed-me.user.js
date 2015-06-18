@@ -246,10 +246,12 @@ embedMe.addModule(function(){
 			];
 		},
 		getEmbedFunction: function() {
+			GM_addStyle(".embed-me-image { max-width: 90%; }");
 			return function(url, text, node) {
 				var image = new Image;
-				image.src = url;
 				image.title = text;
+				image.className = "embed-me-image";
+				image.src = url;
 				node = node.cloneNode(false);
 				node.appendChild(image);
 				return node;
