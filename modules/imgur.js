@@ -27,7 +27,7 @@ embedMe.addModule(function(){
 				var iframe = document.createElement("iframe");
 				iframe.className = "imgur-embed-iframe-pub imgur-embed-iframe-pub-" + id + "-true-540";
 				iframe.scrolling = "no";
-				iframe.src = "//imgur.com/" + id + "/embed?w=540&ref=" + location.href;
+				iframe.src = "//imgur.com/" + id + "/embed?w=540&ref=" + location.href + "#embed-me";
 				return iframe;
 			};
 		}

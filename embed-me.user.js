@@ -17,12 +17,15 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @license     MIT
-// @noframes
 // ==/UserScript==
 
 var embedMe = function(){
 
 	"use strict";
+
+	if (location.hash.indexOf("embed-me") >= 0) {
+		return null;
+	}
 
 	var globalMods = [],
 		index = {},

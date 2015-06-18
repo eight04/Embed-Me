@@ -17,12 +17,15 @@
 // @grant       GM_setValue
 // @grant       GM_xmlhttpRequest
 // @license     MIT
-// @noframes
 // ==/UserScript==
 
 var embedMe = function(){
 
 	"use strict";
+
+	if (location.hash.indexOf("embed-me") >= 0) {
+		return null;
+	}
 
 	var globalMods = [],
 		index = {},
@@ -284,7 +287,7 @@ embedMe.addModule(function(){
 				var iframe = document.createElement("iframe");
 				iframe.className = "imgur-embed-iframe-pub imgur-embed-iframe-pub-" + id + "-true-540";
 				iframe.scrolling = "no";
-				iframe.src = "//imgur.com/" + id + "/embed?w=540&ref=" + location.href;
+				iframe.src = "//imgur.com/" + id + "/embed?w=540&ref=" + location.href + "#embed-me";
 				return iframe;
 			};
 		}
@@ -379,7 +382,7 @@ embedMe.addModule(function(){
 			];
 		},
 		getEmbedFunction: function() {
-			return function(id, url, text, replace) {
+			return function(id, url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
 					url: "//www.youtube.com/oembed?format=json&url=" + url,
