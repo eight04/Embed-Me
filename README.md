@@ -62,7 +62,12 @@ Some online embedding service
 
 Changelog
 ---------
-* Version 0.1.1 (Jun 17, 2015)
+* 0.2.0 (Jun 18, 2015)
+	- Update GM_config.
+	- Fix image max-width.
+	- Fix imgur iframe.
+	- Fix youtube bug.
+* 0.1.1 (Jun 17, 2015)
 	- Add @noframes.
-* Version 0.1.0 (Jun 17, 2015)
+* 0.1.0 (Jun 17, 2015)
 	- First release.
