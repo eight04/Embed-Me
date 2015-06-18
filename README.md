@@ -50,7 +50,10 @@ A module object should look like:
 
 Known issues
 ------------
+* [Mixed content restriction][3].
 * Twitch always auto start playing.
+
+[3]: https://developer.mozilla.org/en-US/docs/Security/MixedContent
 
 Some online embedding service
 -----------------------------
