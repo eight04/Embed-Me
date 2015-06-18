@@ -14,7 +14,7 @@ embedMe.addModule(function(){
 			];
 		},
 		getEmbedFunction: function() {
-			return function(id, url, text, replace) {
+			return function(id, url, text, node, replace) {
 				GM_xmlhttpRequest({
 					method: "GET",
 					url: "//www.youtube.com/oembed?format=json&url=" + url,
