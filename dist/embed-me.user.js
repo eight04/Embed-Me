@@ -6,7 +6,7 @@
 // @compatible  firefox
 // @compatible  chrome
 // @compatible  opera
-// @version     0.2.0
+// @version     0.2.1
 // @namespace   eight04.blogspot.com
 // @description An userscript to embed video, images from links.
 // @include     http*
@@ -379,12 +379,15 @@ embedMe.addModule(function(){
 		],
 		getPatterns: function() {
 			return [
-				/youtube\.com\/watch\?v=([^&]+)/i,
-				/youtu\.be\/([^?]+)/i
+				/youtube\.com\/watch\?.*?v=([^&]+)/i,
+				/youtu\.be\/([^?]+)/i,
+				/youtube\.com\/embed\/([^?#]+)/,
+				/youtube\.com\/v\/([^?#]+)/
 			];
 		},
 		getEmbedFunction: function() {
 			return function(id, url, text, node, replace) {
+				url = "https://www.youtube.com/watch?v=" + id;
 				GM_xmlhttpRequest({
 					method: "GET",
 					url: "//www.youtube.com/oembed?format=json&url=" + url,

@@ -62,6 +62,8 @@ Some online embedding service
 
 Changelog
 ---------
+* 0.2.1 (Oct 6, 2015)
+	- Support more patterns in youtube module.
 * 0.2.0 (Jun 18, 2015)
 	- Update GM_config.
 	- Fix image max-width.
