@@ -2,20 +2,20 @@ Embed Me!
 =========
 An userscript to embed videos, images from anchor link.
 
-Demo
-----
-[Demo page][2]
+Test page
+---------
 
-[2]: https://rawgit.com/eight04/Embed-Me/master/demo.html
+Install the script and visit this page:  
+[Demo page](https://raw.githack.com/eight04/Embed-Me/master/test-page.html)
 
 Supported sites
 ---------------
-Checkout the [module folder][1]. It is welcome to contribute more modules.
 
-[1]: https://github.com/eight04/Embed-Me/tree/master/modules
+Checkout the [module folder](https://github.com/eight04/Embed-Me/tree/master/modules). Contributions welcome!
 
 Module
 ------
+
 A module object should look like:
 ```javascript
 {
@@ -49,6 +49,7 @@ A module object should look like:
 ```
 
 Known issues
+
 ------------
 * [Mixed content restriction][3].
 * Twitch always auto start playing.
@@ -57,19 +58,35 @@ Known issues
 
 Some online embedding service
 -----------------------------
+
 * [Noembed](https://noembed.com/)
 * [embed.ly](http://embed.ly/)
 
 Changelog
 ---------
+
+* 0.3.0 (Jan 12, 2020)
+
+  - Refactor.
+  - Add: fumen module.
+  - Add: options to toggle each module.
+  - Breaking: switch to webext-pref.
+
 * 0.2.1 (Oct 6, 2015)
+
 	- Support more patterns in youtube module.
+  
 * 0.2.0 (Jun 18, 2015)
+
 	- Update GM_config.
 	- Fix image max-width.
 	- Fix imgur iframe.
 	- Fix youtube bug.
+  
 * 0.1.1 (Jun 17, 2015)
+
 	- Add @noframes.
+  
 * 0.1.0 (Jun 17, 2015)
+
 	- First release.

@@ -1,9 +1,39 @@
 {
   "name": "embed-me",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-watch": "^0.6.1"
-  }
+    "eslint": "^6.8.0",
+    "rollup": "^1.29.0",
+    "userscript-meta-cli": "^0.4.2"
+  },
+  "repository": "eight04/embed-me",
+  "license": "MIT",
+  "userscript": {
+    "name": "Embed Me!",
+    "namespace": "eight04.blogspot.com",
+    "grant": [
+      "GM_addStyle",
+      "GM_registerMenuCommand",
+      "GM_getValue",
+      "GM_setValue",
+      "GM_deleteValue",
+      "GM_xmlhttpRequest"
+    ],
+    "require": "https://greasyfork.org/scripts/371339-gm-webextpref/code/GM_webextPref.js?version=705415",
+    "connect": [
+      "gfycat.com",
+      "soundcloud.com",
+      "www.youtube.com"
+    ],
+    "noframes": true
+  },
+  "author": "eight04 <eight04@gmail.com>",
+  "description": "Embed video, images from links.",
+  "scripts": {
+    "test": "eslint \"**/*.js\" --cache",
+    "build": "node build-module-index && rollup -c"
+  },
+  "eslintIgnore": [
+    "dist"
+  ]
 }
