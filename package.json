@@ -31,7 +31,10 @@
   "description": "Embed video, images from links.",
   "scripts": {
     "test": "eslint \"**/*.js\" --cache",
-    "build": "node build-module-index && rollup -c"
+    "build": "node build-module-index && rollup -c",
+    "preversion": "npm test",
+    "version": "npm run build && git add .",
+    "postversion": "git push --follow-tags"
   },
   "eslintIgnore": [
     "dist"
