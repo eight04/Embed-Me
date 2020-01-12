@@ -228,7 +228,8 @@ var modules = [fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube];
 const pref = GM_webextPref({
   default: {
     simple: true,
-    excludes: ""
+    excludes: "",
+    ...Object.fromEntries(modules.map(m => [m.name, true]))
   },
   body: [
     {
@@ -240,7 +241,12 @@ const pref = GM_webextPref({
 			label: "Excludes these urls (regexp per line)",
 			type: "textarea",
       key: "excludes"
-    }
+    },
+    ...modules.map(module => ({
+      label: module.name,
+      key: module.name,
+      type: "checkbox"
+    }))
   ],
   getNewScope: () => location.hostname
 });
@@ -356,7 +362,7 @@ function embed(node) {
     mods.push(index[node.hostname]);
   }
 
-  mods = mods.concat(globalMods);
+  mods = mods.concat(globalMods).filter(mod => pref.get(mod.name));
 
   for (j = 0; j < mods.length; j++) {
     mod = mods[j];
