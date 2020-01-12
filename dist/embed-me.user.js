@@ -17,6 +17,7 @@
 // @connect gfycat.com
 // @connect soundcloud.com
 // @connect www.youtube.com
+// @noframes true
 // @include *
 // ==/UserScript==
 

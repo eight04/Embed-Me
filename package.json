@@ -24,7 +24,8 @@
       "gfycat.com",
       "soundcloud.com",
       "www.youtube.com"
-    ]
+    ],
+    "noframes": true
   },
   "author": "eight04 <eight04@gmail.com>",
   "description": "Embed video, images from links.",
