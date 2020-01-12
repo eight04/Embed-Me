@@ -1,6 +1,7 @@
 {
 	"env": {
-		"browser": true
+		"browser": true,
+    "greasemonkey": true
 	},
 	"rules": {
 		"eqeqeq": 0,
@@ -11,11 +12,11 @@
 		"quotes": 0,
 		"no-shadow": 0
 	},
-	"globals": {
-		"GM_config": false,
-		"embedMe": true,
-		"GM_registerMenuCommand": false,
-		"GM_xmlhttpRequest": false,
-		"GM_addStyle": false
-	}
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "extends": [
+    "eslint:recommended"
+  ]
 }
