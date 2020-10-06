@@ -6,4 +6,5 @@ import soundcloud from "./soundcloud.js";
 import twitch from "./twitch.js";
 import video from "./video.js";
 import youtube from "./youtube.js";
-export default [fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube];
+import channel9 from "./channel9.js";
+export default [fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube,channel9];
