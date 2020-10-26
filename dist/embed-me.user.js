@@ -21,6 +21,24 @@
 // @include *
 // ==/UserScript==
 
+var channel9 = {
+  name: "Channel 9",
+  domains: ["channel9.msdn.com"],
+  getPatterns: function() {
+    return [
+      /channel9\.msdn\.com\/[\w-]/i
+    ];
+  },
+  getEmbedFunction: function() {
+    return function (url) {
+      var urlPlayer = url + '/player?format=html5';
+      var container = document.createElement("div");
+      container.innerHTML = '<iframe src="' + urlPlayer + '" width="640" height="360" allowFullScreen frameBorder="0" title="' + url + '"></iframe>';
+      return container;
+    };
+  }
+};
+
 var fumen = {
   name: "Fumen",
   global: true,
@@ -222,7 +240,7 @@ var youtube = {
   }
 };
 
-var modules = [fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube];
+var modules = [channel9,fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube];
 
 /* global GM_webextPref */
 
