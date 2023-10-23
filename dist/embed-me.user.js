@@ -60,36 +60,6 @@ var fumen = {
   }
 };
 
-var gfycat = {
-  name: "Gfycat",
-  domains: ["gfycat.com"],
-  getPatterns: function() {
-    return [
-      /gfycat\.com\/([A-Z]\w*)$/i
-    ];
-  },
-  getEmbedFunction: function() {
-    return function(name, url, text, node, replace) {
-      GM_xmlhttpRequest({
-        method: "GET",
-        url: "https://gfycat.com/cajax/get/" + name,
-        onload: function(response) {
-          var res = JSON.parse(response.responseText);
-          if (res.error) {
-            return;
-          }
-          var video = document.createElement("video");
-          video.autoplay = true;
-          video.loop = true;
-          video.src = res.gfyItem.mp4Url;
-          video.title = text;
-          replace(video);
-        }
-      });
-    };
-  }
-};
-
 var image = {
   name: "Image",
   global: true,
@@ -177,13 +147,19 @@ var twitch = {
   domains: ["www.twitch.tv"],
   getPatterns: function() {
     return [
-      /twitch\.tv\/(\w+)\/v\/(\d+)/i
+      /twitch\.tv\/(\w+)\/(v)\/(\d+)/i,
+      /twitch\.tv\/()(videos)\/(\d+)/i,
+      /twitch\.tv\/(\w+)\/(clip)\/([^/]+)/i,
     ];
   },
   getEmbedFunction: function() {
-    return function (user, id) {
+    return function (user, type, id) {
       var container = document.createElement("div");
-      container.innerHTML = '<object bgcolor="#000000" data="http://www.twitch.tv/swflibs/TwitchPlayer.swf" height="378" id="clip_embed_player_flash" type="application/x-shockwave-flash" width="620"><param name="movie" value="http://www.twitch.tv/swflibs/TwitchPlayer.swf" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="allowFullScreen" value="true" /><param name="flashvars" value="channel=' + user + '&amp;auto_play=false&amp;autoplay=false&amp;autostart=false&amp;start_volume=25&amp;videoId=v' + id + '" /></object><br /><a href="http://www.twitch.tv/' + user + '" style="padding:2px 0px 4px; display:block; width: 320px; font-weight:normal; font-size:10px; text-decoration:underline;">Watch live video from ' + user + ' on Twitch</a>';
+      if (type == "v" || type == "videos") {
+        container.innerHTML = `<iframe src="https://player.twitch.tv/?video=${id}&autoplay=false&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>`;
+      } else if (type == "clip") {
+        container.innerHTML = `<iframe src="https://clips.twitch.tv/embed?clip=${id}&autoplay=false&parent=${location.hostname}" frameborder="0" allowfullscreen="true" scrolling="no" height="378" width="620"></iframe>`;
+      }
       return container;
     };
   }
@@ -240,7 +216,7 @@ var youtube = {
   }
 };
 
-var modules = [channel9,fumen,gfycat,image,imgur,soundcloud,twitch,video,youtube];
+var modules = [channel9,fumen,image,imgur,soundcloud,twitch,video,youtube];
 
 /* global GM_webextPref */
 
