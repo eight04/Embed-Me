@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name Embed Me!
-// @version 0.3.0
+// @version 0.4.0
 // @description Embed video, images from links.
 // @license MIT
 // @author eight04 <eight04@gmail.com>
