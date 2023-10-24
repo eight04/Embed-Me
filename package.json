@@ -2,8 +2,10 @@
   "name": "embed-me",
   "version": "0.3.0",
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "rollup": "^1.29.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "eslint": "^8.52.0",
+    "rollup": "^4.1.4",
+    "rollup-plugin-cjs-es": "^3.0.0",
     "userscript-meta-cli": "^0.4.2"
   },
   "repository": "eight04/embed-me",
@@ -38,5 +40,8 @@
   },
   "eslintIgnore": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "fumen-svg": "^0.1.5"
+  }
 }

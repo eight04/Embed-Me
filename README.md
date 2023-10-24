@@ -65,6 +65,13 @@ Some online embedding service
 Changelog
 ---------
 
+* 0.4.0 (Oct 25, 2023)
+
+  - Change: bundle fumen-svg.
+  - Change: drop gfycat.
+  - Fix: twitch vod and clip.
+  - Fix: initialize domain settings correctly.
+
 * 0.3.0 (Jan 12, 2020)
 
   - Refactor.

@@ -31,7 +31,11 @@ const globalMods = [];
 const index = {};
 let excludedUrl = null;
 
-pref.ready().then(() => {
+pref.ready()
+  .then(() => pref.setCurrentScope(location.hostname))
+  .then(init);
+
+function init() {
   pref.on("change", change => {
     if (change.excludes != null) {
       updateExclude();
@@ -56,7 +60,7 @@ pref.ready().then(() => {
       embed(links[i]);
     }
   });
-});
+}
 
 function validParent(node) {
   var cache = node;
