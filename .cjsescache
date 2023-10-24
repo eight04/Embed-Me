@@ -1,0 +1,21 @@
+[
+  "node_modules/escape-html/index.js",
+  "node_modules/tetris-fumen/index.js",
+  "node_modules/tetris-fumen/lib/action.js",
+  "node_modules/tetris-fumen/lib/buffer.js",
+  "node_modules/tetris-fumen/lib/comments.js",
+  "node_modules/tetris-fumen/lib/decoder.js",
+  "node_modules/tetris-fumen/lib/defines.js",
+  "node_modules/tetris-fumen/lib/encoder.js",
+  "node_modules/tetris-fumen/lib/field.js",
+  "node_modules/tetris-fumen/lib/inner_field.js",
+  "node_modules/tetris-fumen/lib/quiz.js",
+  "src/modules/fumen.js",
+  "src/modules/image.js",
+  "src/modules/imgur.js",
+  "src/modules/index.js",
+  "src/modules/soundcloud.js",
+  "src/modules/twitch.js",
+  "src/modules/video.js",
+  "src/modules/youtube.js"
+]

@@ -1,4 +1,5 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import cjs from 'rollup-plugin-cjs-es';
 import userscript from "userscript-meta-cli";
 
 export default {
@@ -9,6 +10,7 @@ export default {
     banner: userscript.stringify(userscript.getMeta())
   },
   plugins: [
-    nodeResolve()
+    nodeResolve(),
+    cjs({nested: true})
   ]
 };

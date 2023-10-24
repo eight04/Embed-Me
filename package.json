@@ -5,6 +5,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "eslint": "^8.52.0",
     "rollup": "^4.1.4",
+    "rollup-plugin-cjs-es": "^3.0.0",
     "userscript-meta-cli": "^0.4.2"
   },
   "repository": "eight04/embed-me",

@@ -1,4 +1,4 @@
-import fumen from "fumen-svg";
+import {createSVG} from "fumen-svg";
 
 export default {
   name: "Fumen",
@@ -13,7 +13,7 @@ export default {
       var image = new Image;
       image.title = text;
       image.className = "embed-me-fumen";
-      image.src = `data:image/svg+xml,${encodeURIComponent(fumen.createSVG(data))}`
+      image.src = `data:image/svg+xml,${encodeURIComponent(createSVG({data}))}`
       node = node.cloneNode(false);
       node.appendChild(image);
       return node;
