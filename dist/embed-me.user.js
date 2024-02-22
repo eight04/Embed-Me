@@ -2116,7 +2116,8 @@ var youtube = {
       url = "https://www.youtube.com/watch?v=" + id;
       GM_xmlhttpRequest({
         method: "GET",
-        url: "https://www.youtube.com/oembed?format=json&url=" + url,
+        // Change maxwidth and maxheight url parameters to your desired YouTube dimensions
+        url: "https://www.youtube.com/oembed?maxwidth=640&maxheight=360&format=json&url=" + url,
         onload: function(response) {
           var html = JSON.parse(response.responseText).html,
             container = document.createElement("div");
